@@ -1,0 +1,188 @@
+@import url('https://fonts.googleapis.com/css2?family=Righteous&display=swap');
+
+:root {
+	// COLOR CSS VARIABLES
+	--color_base: #191919; // Black 
+	--color_pen: #fff; // White
+	
+	// SIZE VARIABLES
+	--size: 20vmin; // Resize typo by only editing this variable
+	--fog: calc(var(--size) / 1.2);
+	--scale: 4.8; // Increase/decrease fog's size animation effect. Specially if you change the HTML h1, you might need to tweak this value.
+}
+
+// MIXINS
+@mixin size($w, $h: $w) {
+	width: $w;
+	height: $h;
+}
+
+// PATTERNS
+.p-flex {
+	display: flex;
+}
+
+.p-circle {
+	border-radius: 50%;
+}
+
+// LAYOUT
+body {
+	height: 100vh;
+	background-color: var(--color_base);
+	margin: 0;
+	overflow: hidden;
+}
+
+::selection {
+	background-color: transparent;
+}
+
+.halloctober {
+	@include size(100%);
+	
+	&__banner {
+		margin: auto; // Center magic after parent's display flex
+		padding: 3%;
+		position: relative; // To place fog
+		overflow: hidden;
+	}
+}
+
+// TYPOGRAPHY
+.typo {
+	color: var(--color_pen);
+	cursor: default;
+	font-family: 'Fredoka One', sans-serif;
+	font-size: var(--size);
+	font-weight: normal;
+	letter-spacing: 0.1rem;
+	margin: auto; // Center magic
+	outline: none;
+	position: relative; // To place text-shadows
+	
+	&:hover {
+		+ .fog {
+			animation-play-state: paused;
+		}
+	}
+	
+	$red: #b30808; 
+	$blue: #1A237E; 
+	$anim: 2s ease-in-out infinite;
+
+	// Text Shadow Effects
+	// We add them here to improve animation's performance
+	&::before,
+	&::after {
+		color: transparent;
+		content: '404'; // Same word as in HTML h1
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: -10;
+	}
+	
+	// Upper Shadow
+	&::before {
+		animation: move_upper_shadow $anim;
+		opacity: 0;
+		text-shadow: 
+			6px 0 2px rgba($red, 0.4),
+			12px 0 2px rgba($blue, 0.3);
+	}
+	
+	// Bottom Shadow
+	&::after {
+		animation: move_bottom_shadow $anim;
+		text-shadow: 
+			2px 4px 2px rgba($red, 0.4),
+			4px 8px 2px rgba($blue, 0.3);
+	}
+
+	transform: skew(10deg, 2deg);
+	animation: float $anim;
+	@at-root {		
+		@keyframes move_upper_shadow {
+			0%, 90%, 100% {
+				opacity: 0;
+				transform: translateX(-2%);
+			}
+			30% {
+				opacity: 1;
+				transform: translateX(0);
+			}
+		}
+		@keyframes move_bottom_shadow {
+			0%, 90%, 100% {
+				opacity: 1;
+				transform: translate(0, 0);
+			}
+			30% {
+				opacity: 0;
+				transform: translateY(-3.5%);
+			}
+		}
+		@keyframes float {
+			50% {
+				transform: scaleY(1.01) skew(-10deg, -2deg);
+			}
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		animation: none;
+		transform: none;
+		
+		&::before,
+		&::after {
+			animation: none;
+		}
+	}
+}
+
+.fog {
+	--fog_neg: calc(var(--fog) * -1);
+		
+	@include size(var(--fog));
+	background-color: var(--color_base);
+	position: absolute;
+	top: var(--fog_neg);
+	left: var(--fog_neg);
+	
+	transform: translate3d(0, 0, 0); // Fixes Safari mouseover flickering bug
+	transform-origin: 0 50%; // Fixes Firefox laggy animation bug and smooths animation across Browsers
+	animation: move_fog 13s 2s ease-in-out alternate infinite;
+	@at-root {
+		@keyframes move_fog {
+			50% {
+				transform: scale(var(--scale));
+			}
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		animation: none;
+	}
+	
+	// Blurry Effect
+	&::after {
+		--blur: calc(var(--fog) * 2);
+		--blur_neghalf: calc(var(--blur) / -2);
+		--filter: calc(var(--fog) / 30);
+		
+		@extend .p-circle;
+		
+		@include size(var(--blur));
+		content: '';
+		background-color: var(--color_base);
+		filter: blur(var(--filter));
+		margin-top: var(--blur_neghalf);
+		margin-left: var(--blur_neghalf);
+		position: absolute;
+		top: 50%;
+		left: 50%;
+	}
+}
+a{
+	text-decoration: none;
+	color: yellowgreen;
+}
