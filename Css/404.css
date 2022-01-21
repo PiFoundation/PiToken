@@ -3,7 +3,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 25vw;
+  font-size: 15vw;
   animation-name: wave;
   animation-iteration-count: infinite;
   animation-timing-function: ease-in-out;
